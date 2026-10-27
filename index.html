@@ -4,6 +4,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Miss Noha</title>
 <meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#FFFCFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1C0E20" media="(prefers-color-scheme: dark)">
 <meta name="description" content="مس نهى — مدرسة علوم وأحياء (Science &amp; Biology)، حصص أونلاين وأوفلاين في بورسعيد. للتواصل واتساب 01551401807.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,6 +24,7 @@
     --line: #E3D4EE;
     --teal: #35AFA0;
     --teal-ink: #FFFFFF;
+    --teal-hover: #2B9488;
     --error: #B3261E;
     --shadow: 0 6px 24px rgba(87, 32, 95, .10);
     --font-display: "Baloo Bhaijaan 2", "Tajawal", "Segoe UI", Tahoma, sans-serif;
@@ -31,18 +34,28 @@
     :root:not([data-theme="light"]) {
       --bg: #1C0E20; --surface: #26142B; --lavender: #2F1A35; --sticker-bg: #E7E1FB;
       --plum: #E2B8EA; --plum-dark: #F6EAF8; --fg: #F6EAF8; --muted: #CDB5D3; --line: #432A4A;
-      --teal: #4CC7B7; --teal-ink: #0E2A26; --error: #FFB4AB; --shadow: 0 6px 24px rgba(0, 0, 0, .35);
+      --teal: #4CC7B7; --teal-ink: #0E2A26; --teal-hover: #6FD6C8; --error: #FFB4AB; --shadow: 0 6px 24px rgba(0, 0, 0, .35);
       color-scheme: dark;
     }
   }
   :root[data-theme="dark"] {
     --bg: #1C0E20; --surface: #26142B; --lavender: #2F1A35; --sticker-bg: #E7E1FB;
     --plum: #E2B8EA; --plum-dark: #F6EAF8; --fg: #F6EAF8; --muted: #CDB5D3; --line: #432A4A;
-    --teal: #4CC7B7; --teal-ink: #0E2A26; --error: #FFB4AB; --shadow: 0 6px 24px rgba(0, 0, 0, .35);
+    --teal: #4CC7B7; --teal-ink: #0E2A26; --teal-hover: #6FD6C8; --error: #FFB4AB; --shadow: 0 6px 24px rgba(0, 0, 0, .35);
     color-scheme: dark;
   }
 
   * { box-sizing: border-box; }
+  html { -webkit-tap-highlight-color: rgba(87, 32, 95, .15); }
+  @media (max-width: 759px) { html { scroll-padding-bottom: 96px; } }
+  a, button, input, textarea { touch-action: manipulation; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+  .skip {
+    position: absolute; z-index: 30; inset-inline-start: 16px; top: -100px;
+    background: var(--plum); color: var(--bg); padding: 10px 18px; border-radius: 12px; font-weight: 700; text-decoration: none;
+  }
+  .skip:focus { top: calc(8px + env(safe-area-inset-top, 0px)); }
+  main:focus { outline: none; }
   body {
     margin: 0;
     background: var(--bg);
@@ -69,7 +82,8 @@
   .top { border-bottom: 1px solid var(--line); }
   .top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 12px; }
   .brand { font-family: var(--font-display); font-weight: 800; font-size: 1.5rem; color: var(--plum); text-decoration: none; }
-  .brand span { font-family: var(--font-body); font-weight: 500; font-size: .95rem; color: var(--muted); margin-inline-start: 6px; }
+  .brand .ar { font-family: var(--font-body); font-weight: 500; font-size: .95rem; color: var(--muted); margin-inline-start: 6px; }
+  .brand:hover, .brand:active { color: var(--plum-dark); }
 
   /* Buttons */
   .btn {
@@ -80,7 +94,9 @@
   }
   .btn:hover { transform: translateY(-2px); }
   .btn-wa { background: var(--teal); color: var(--teal-ink); }
+  .btn-wa:hover, .btn-wa:active { background: var(--teal-hover); }
   .btn-ghost { border: 2px solid var(--plum); color: var(--plum); }
+  .btn-ghost:hover, .btn-ghost:active { background: var(--lavender); color: var(--plum-dark); }
   .btn-sm { min-height: 42px; padding: 6px 16px; font-size: .95rem; }
   .btn svg { width: 22px; height: 22px; flex: none; }
 
@@ -166,6 +182,7 @@
   .contact h2 { font-size: clamp(1.7rem, 5vw, 2.3rem); }
   .phone { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.8rem, 7vw, 2.4rem); color: var(--plum); direction: ltr; unicode-bidi: isolate; user-select: all; font-variant-numeric: tabular-nums; letter-spacing: .03em; }
   .copy { background: none; border: 1px solid var(--line); color: var(--muted); border-radius: 999px; padding: 6px 16px; font: inherit; font-size: .95rem; cursor: pointer; }
+  .copy:hover, .copy:active { border-color: var(--plum); color: var(--plum); }
 
   /* Contact form */
   .or { color: var(--muted); font-weight: 700; margin-top: 12px; }
@@ -181,8 +198,11 @@
   .field textarea { resize: vertical; min-height: 120px; line-height: 1.7; }
   .field input:focus-visible, .field textarea:focus-visible { outline: 3px solid var(--teal); outline-offset: 1px; border-color: transparent; }
   .field input[aria-invalid="true"], .field textarea[aria-invalid="true"] { border-color: var(--error); }
+  .field ::placeholder { color: var(--muted); opacity: .7; }
+  .field-error { color: var(--error); font-weight: 700; font-size: .95rem; }
   .form-error { color: var(--error); font-weight: 700; }
   .btn-send { width: 100%; border: 0; cursor: pointer; background: var(--plum); color: var(--bg); }
+  .btn-send:hover, .btn-send:active { background: var(--plum-dark); }
   .btn-send:disabled { opacity: .6; cursor: progress; transform: none; }
   .form-done { font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; color: var(--plum); text-align: center; padding-block: 24px; }
 
@@ -205,11 +225,13 @@
   @media (prefers-reduced-motion: reduce) { .btn { transition: none; } .btn:hover { transform: none; } }
 </style>
 
-<div dir="rtl" lang="ar">
+<div dir="rtl" lang="ar" id="top">
+
+<a class="skip" href="#main">انتقل للمحتوى</a>
 
 <header class="top">
   <div class="wrap">
-    <a class="brand" href="#top" aria-label="Miss Noha — أول الصفحة">Miss Noha<span>مس نهى</span></a>
+    <a class="brand" href="#top" aria-label="Miss Noha — أول الصفحة"><span translate="no">Miss&nbsp;Noha</span><span class="ar">مس نهى</span></a>
     <a class="btn btn-wa btn-sm" href="https://wa.me/201551401807" target="_blank" rel="noopener">
       <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.3c0-.1-.2-.2-.5-.3Z"/></svg>
       واتساب
@@ -217,7 +239,7 @@
   </div>
 </header>
 
-<main id="top">
+<main id="main" tabindex="-1">
 
   <section class="hero" aria-labelledby="hero-title">
     <div class="wrap">
@@ -234,7 +256,7 @@
         </div>
       </div>
       <figure class="hero-img">
-        <img src="images/hero.jpg" width="800" height="800" alt="رسمة مس نهى بالبالطو الأبيض في معمل أحياء، ماسكة دورق وأنبوبة اختبار وجنبها ميكروسكوب">
+        <img src="images/hero.jpg" width="800" height="800" fetchpriority="high" alt="رسمة مس نهى بالبالطو الأبيض في معمل أحياء، ماسكة دورق وأنبوبة اختبار وجنبها ميكروسكوب">
       </figure>
     </div>
   </section>
@@ -283,7 +305,7 @@
         </li>
         <li class="service">
           <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 19h20"/><path d="m10.5 8.5 3.5 2-3.5 2Z"/></svg></span>
-          <div><h3>حصص أونلاين تفاعلية</h3><p>بأدوات زي <bdi>Zoom</bdi> · <bdi>Google Classroom</bdi> · <bdi>Microsoft Teams</bdi> · <bdi>Kahoot</bdi> · <bdi>Nearpod</bdi></p></div>
+          <div><h3>حصص أونلاين تفاعلية</h3><p>بأدوات زي <bdi translate="no">Zoom</bdi> · <bdi translate="no">Google Classroom</bdi> · <bdi translate="no">Microsoft Teams</bdi> · <bdi translate="no">Kahoot</bdi> · <bdi translate="no">Nearpod</bdi></p></div>
         </li>
       </ul>
     </div>
@@ -349,7 +371,7 @@
   <section class="contact band" id="contact" aria-labelledby="contact-title">
     <div class="wrap">
       <h2 id="contact-title">تواصل مع مس نهى</h2>
-      <p>قولّي الصف والمنهج، ونتفق على الحصص المناسبة.</p>
+      <p>اكتب الصف والمنهج، ونتفق على الحصص المناسبة.</p>
       <p class="phone" id="phone">01551401807</p>
       <div class="cta-row">
         <a class="btn btn-wa" href="https://wa.me/201551401807" target="_blank" rel="noopener">
@@ -357,6 +379,7 @@
           افتح واتساب
         </a>
         <button class="copy" type="button" id="copy-phone">انسخ الرقم</button>
+        <span class="sr-only" id="copy-status" aria-live="polite"></span>
       </div>
 
       <p class="or">أو ابعت رسالة من هنا</p>
@@ -364,15 +387,18 @@
         <form id="contact-form" novalidate>
           <div class="field">
             <label for="cf-name">الاسم</label>
-            <input id="cf-name" name="name" type="text" autocomplete="name" maxlength="100" required>
+            <input id="cf-name" name="name" type="text" autocomplete="name" maxlength="100" required aria-describedby="cf-name-error">
+            <p class="field-error" id="cf-name-error" hidden></p>
           </div>
           <div class="field">
             <label for="cf-phone">رقم الموبايل</label>
-            <input id="cf-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" dir="ltr" required>
+            <input id="cf-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" dir="ltr" placeholder="01xxxxxxxxx…" required aria-describedby="cf-phone-error">
+            <p class="field-error" id="cf-phone-error" hidden></p>
           </div>
           <div class="field">
             <label for="cf-message">الرسالة</label>
-            <textarea id="cf-message" name="message" rows="4" maxlength="2000" required></textarea>
+            <textarea id="cf-message" name="message" rows="4" maxlength="2000" autocomplete="off" required aria-describedby="cf-message-error"></textarea>
+            <p class="field-error" id="cf-message-error" hidden></p>
           </div>
           <p class="form-error" id="cf-error" role="alert" hidden></p>
           <button class="btn btn-send" type="submit" id="cf-submit">ابعت الرسالة</button>
@@ -385,7 +411,7 @@
 </main>
 
 <footer>
-  <div class="wrap"><bdi>Miss Noha Kataria</bdi> · مدرسة علوم وأحياء · <bdi>Science &amp; Biology Teacher</bdi> · حصص أونلاين وأوفلاين</div>
+  <div class="wrap"><bdi translate="no">Miss&nbsp;Noha&nbsp;Kataria</bdi> · مدرسة علوم وأحياء · <bdi>Science &amp; Biology Teacher</bdi> · حصص أونلاين وأوفلاين</div>
 </footer>
 
 <a class="fab" href="https://wa.me/201551401807" target="_blank" rel="noopener" aria-label="تواصل على واتساب">
@@ -397,11 +423,17 @@
 <script>
   document.getElementById('copy-phone').addEventListener('click', function () {
     var btn = this;
-    var done = function () { btn.textContent = 'اتنسخ'; setTimeout(function () { btn.textContent = 'انسخ الرقم'; }, 2000); };
+    var status = document.getElementById('copy-status');
+    var done = function () {
+      btn.textContent = 'اتنسخ';
+      status.textContent = 'اتنسخ الرقم';
+      setTimeout(function () { btn.textContent = 'انسخ الرقم'; status.textContent = ''; }, 2000);
+    };
     var fallback = function () {
       var r = document.createRange(); r.selectNodeContents(document.getElementById('phone'));
       var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
       btn.textContent = 'الرقم متعلّم، انسخه';
+      status.textContent = 'الرقم متعلّم، انسخه';
     };
     try { navigator.clipboard.writeText('01551401807').then(done, fallback); } catch (e) { fallback(); }
   });
@@ -420,6 +452,11 @@
       name: document.getElementById('cf-name'),
       phone: document.getElementById('cf-phone'),
       message: document.getElementById('cf-message')
+    };
+    var fieldErrors = {
+      name: document.getElementById('cf-name-error'),
+      phone: document.getElementById('cf-phone-error'),
+      message: document.getElementById('cf-message-error')
     };
 
     // Accept Arabic-Indic digits typed on an Arabic keyboard.
@@ -440,10 +477,27 @@
       else if (!/^\+?\d{6,15}$/.test(values.phone)) problems.push(['phone', 'رقم الموبايل لازم يكون أرقام بس، من 6 لـ 15 رقم.']);
       if (!values.message) problems.push(['message', 'اكتب الرسالة.']);
 
-      Object.keys(fields).forEach(function (k) { fields[k].removeAttribute('aria-invalid'); });
-      problems.forEach(function (p) { fields[p[0]].setAttribute('aria-invalid', 'true'); });
+      Object.keys(fields).forEach(function (k) {
+        fields[k].removeAttribute('aria-invalid');
+        fieldErrors[k].hidden = true;
+        fieldErrors[k].textContent = '';
+      });
+      problems.forEach(function (p) {
+        fields[p[0]].setAttribute('aria-invalid', 'true');
+        fieldErrors[p[0]].textContent = p[1];
+        fieldErrors[p[0]].hidden = false;
+      });
       return { values: values, problems: problems };
     }
+
+    // Warn before leaving with an unsent message.
+    var dirty = false;
+    form.addEventListener('input', function () { dirty = true; });
+    window.addEventListener('beforeunload', function (e) {
+      if (!dirty) return;
+      e.preventDefault();
+      e.returnValue = '';
+    });
 
     function showError(text) {
       errorBox.textContent = text;
@@ -455,7 +509,6 @@
       errorBox.hidden = true;
       var result = validate();
       if (result.problems.length) {
-        showError(result.problems.map(function (p) { return p[1]; }).join(' '));
         fields[result.problems[0][0]].focus();
         return;
       }
@@ -473,6 +526,7 @@
         body: JSON.stringify(result.values)
       }).then(function (res) {
         if (!res.ok) throw new Error('HTTP ' + res.status);
+        dirty = false;
         form.hidden = true;
         doneBox.hidden = false;
         doneBox.focus();
