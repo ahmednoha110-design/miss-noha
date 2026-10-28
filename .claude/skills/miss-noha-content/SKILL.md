@@ -24,7 +24,14 @@ The page sells Science & Biology lessons for a real teacher. Parents decide base
 
 ## Not confirmed — leave off the page
 
-Years of experience, school names and dates, specific curriculum brands (Cambridge, American…), testimonials or reviews, student results, IELTS (studying only, no score), trial-session policy, session length. The original brief is `Downloads\miss noha\Miss_Noha_Landing_Page_Brief_for_Claude.docx`; where the user has since corrected it (e.g. the special diploma is in English), the user wins.
+Years of experience, school names and dates, specific curriculum brands (Cambridge, American…), student results, IELTS (studying only, no score), trial-session policy, session length. The original brief is `Downloads\miss noha\Miss_Noha_Landing_Page_Brief_for_Claude.docx`; where the user has since corrected it (e.g. the special diploma is in English), the user wins.
+
+## Sections added 2026-10-28
+
+- **Articles for parents** (`#parents`): the two articles were approved by the user on 2026-10-28. They are general study advice in Miss Noha's voice; keep facts about her out of them. New articles need the user's approval before publishing.
+- **Reviews** (`#reviews`): show only real reviews whose author ticked consent (`allow_publish`) **and** the user picked; first name only. Until then the «قريباً» card stays. Write no reviews yourself.
+- **Video** (`#video`): placeholder «الفيديو قريباً» until the user supplies a video (YouTube link preferred).
+- **Why / journey cards and FAQ** come from the original brief ("Why learn with me", teaching approach, FAQ). Keep their claims to what the brief says.
 
 ## Wording
 
@@ -33,9 +40,10 @@ Years of experience, school names and dates, specific curriculum brands (Cambrid
 - Use English next to Arabic only for the Science/Biology labels and tool names.
 - Keep the form's success text exactly: «وصلتنا رسالتك، هنكلّمك في نفس اليوم.» — show it only after Supabase confirms the insert.
 
-## Supabase (contact form)
+## Supabase (contact and feedback forms)
 
 - Project **miss-noha** on the user's own account, ref `dzixyjhawkncxztvqmxn`. Table `public.messages`: `id`, `name`, `phone`, `message`, `created_at`.
+- Table `public.feedback` (reviews form): `id`, `name`, `grade` (nullable), `message`, `allow_publish`, `created_at`; same insert-only setup, anon inserts `name, grade, message, allow_publish`. As of 2026-10-28 the user's SQL for it had not taken effect (API: table not found), so the form shows its error until the table exists. Re-check with a read (`401` = exists, `404 PGRST205` = missing).
 - Only the **publishable** key (`sb_publishable_…`) goes in the page. Never put a secret / service_role key in any file, commit or chat.
 - RLS stays on with a single INSERT policy for `anon`; anon has column-level INSERT on `name, phone, message` only. Don't add SELECT/UPDATE/DELETE policies — visitors must not read other parents' messages.
 - Insert with `Prefer: return=minimal` (there is no SELECT permission, so `return=representation` fails).
