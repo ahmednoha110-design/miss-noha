@@ -2,7 +2,7 @@
 # Repo checks for the Miss Noha site. Run from anywhere: bash scripts/check.sh
 # Used by the pre-commit hook (.githooks/pre-commit) and CI (.github/workflows/check.yml).
 set -u
-cd "$(git rev-parse --show-toplevel)" || exit 2
+cd "$(dirname "$0")/.." || exit 2
 
 fail=0
 problem() { echo "check failed: $*" >&2; fail=1; }
