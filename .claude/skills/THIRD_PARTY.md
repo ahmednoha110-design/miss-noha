@@ -6,3 +6,7 @@ repo's latest version (added 2026-10-28), all under the MIT license in
 `LICENSE-mattpocock-skills`.
 
 `miss-noha-content` and `publish-site` are this project's own.
+
+To add another skill, copy its folder from `mattpocock/skills` at a pinned commit
+and note it above. The `skills` CLI (`npx skills add`) installs every skill in the
+repo as absolute symlinks into the current machine's folder, whatever `--skill` says.

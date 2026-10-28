@@ -2,6 +2,7 @@
 
 - Before changing any text, fact, section or the contact form, use the `miss-noha-content` skill: only confirmed facts, ask the user when something is missing.
 - To publish any change to `index.html` or `images/`, follow the `publish-site` skill.
+- Checks: `bash scripts/check.sh` (CI runs it on every push). Enable the pre-commit hook once per clone: `git config core.hooksPath .githooks`.
 - `marketing/` holds the QR code and QR card. Regenerate the QR with `python marketing/make_qr.py marketing` (needs `segno zxing-cpp pillow`).
 
 ## Agent skills

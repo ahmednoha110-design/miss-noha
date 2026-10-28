@@ -15,7 +15,7 @@ The page sells Science & Biology lessons for a real teacher. Parents decide base
 - **Grades:** ابتدائي · متوسط · ثانوي (user's wording; keep «متوسط» unless they change it).
 - **Curricula:** National عربي · National لغات · International · مناهج دول الخليج.
 - **Prices and schedule:** «بالاتفاق مع ولي الأمر». No numbers.
-- **WhatsApp:** 01551401807 → `https://wa.me/201551401807?text=…`. Every WhatsApp button pre-fills the parent's message (greeting, then blank lines for الصف / المنهج / المادة / أونلاين ولا أوفلاين). Keep all four links identical, and keep emoji out of the text: the `wa.me` redirect turns them into "�".
+- **WhatsApp:** 01551401807 → `https://wa.me/201551401807?text=…`. Every WhatsApp button pre-fills the parent's message (greeting, then blank lines for الصف / المنهج / المادة / أونلاين ولا أوفلاين). `scripts/check.sh` enforces the link rules (identical links, Arabic/ASCII-only text).
 - **Qualifications** (Faculty of Education, Port Said University) — names only, no years and no grades:
   - بكالوريوس العلوم والتربية — شعبة البيولوجي والجيولوجيا (برنامج خاص)
   - دبلومة مهنية في المناهج وطرق تدريس العلوم باللغة الإنجليزية
