@@ -134,8 +134,8 @@
     display: flex; gap: 14px; align-items: flex-start;
     background: var(--surface); border-radius: 20px; padding: 18px; box-shadow: var(--shadow);
   }
-  .service .ico { flex: none; width: 48px; height: 48px; border-radius: 14px; background: var(--lavender); color: var(--plum); display: grid; place-items: center; }
-  .service .ico svg { width: 26px; height: 26px; }
+  .ico { flex: none; width: 48px; height: 48px; border-radius: 14px; background: var(--lavender); color: var(--plum); display: grid; place-items: center; }
+  .ico svg { width: 26px; height: 26px; }
   .service h3 { font-size: 1.25rem; }
   .service p { color: var(--muted); font-size: 1rem; margin-top: 2px; }
   .service > div { min-width: 0; }
@@ -215,13 +215,24 @@
   footer .wrap { padding-block: 24px 96px; color: var(--muted); font-size: .95rem; text-align: center; }
   @media (min-width: 760px) { footer .wrap { padding-block: 24px; } }
 
-  /* Motion: blocks rise in as they scroll into view (script adds .js and .reveal) */
-  .js .reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
-  .js .reveal.in { opacity: 1; transform: none; }
-  .service, .why li, .journey li, .fact, .article {
-    transition: transform .2s ease, box-shadow .2s ease, opacity .6s ease;
+  /* Motion: blocks rise in as they scroll into view, in CSS alone (scroll-driven animations).
+     The animation only applies before and during a block's entry ("backwards" fill), so once
+     it's in view the normal styles (hover lift included) take over. Browsers without
+     animation-timeline, reduced motion and print simply show everything. */
+  @keyframes rise { from { opacity: 0; transform: translateY(18px); } }
+  @supports (animation-timeline: view()) {
+    @media screen and (prefers-reduced-motion: no-preference) {
+      :is(main section:not(.hero) .section-head, .card, .aud, .steps-grid > *, .video-ph, .quals li, .reviews-empty, #reviews .form-card, .faq details, .contact .wrap > *) {
+        animation: rise linear backwards;
+        animation-timeline: view();
+        animation-range: entry 0% entry 40%;
+      }
+    }
   }
-  .service:hover, .why li:hover, .journey li:hover, .fact:hover, .article:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+
+  /* Cards lift on hover */
+  .card { transition: transform .2s ease, box-shadow .2s ease; }
+  .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
 
   /* Hero doodles */
   .hero { position: relative; overflow: hidden; }
@@ -236,8 +247,6 @@
   /* Why learn with me */
   .why { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)); list-style: none; padding: 0; margin: 0; }
   .why li { background: var(--surface); border-radius: 20px; padding: 20px; box-shadow: var(--shadow); display: grid; gap: 8px; align-content: start; }
-  .why .ico { width: 48px; height: 48px; border-radius: 14px; background: var(--lavender); color: var(--plum); display: grid; place-items: center; }
-  .why .ico svg { width: 26px; height: 26px; }
   .why h3 { font-size: 1.15rem; }
   .why p { color: var(--muted); font-size: 1rem; }
 
@@ -261,14 +270,13 @@
 
   /* Articles for parents */
   .articles { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); align-items: start; }
-  .article { background: var(--surface); border-radius: 20px; box-shadow: var(--shadow); padding: 20px; }
-  .article summary { cursor: pointer; list-style: none; display: grid; gap: 6px; }
-  .article summary::-webkit-details-marker { display: none; }
+  .article { background: var(--surface); border-radius: 20px; box-shadow: var(--shadow); padding: 20px; display: grid; gap: 6px; align-content: start; }
   .article .kicker { color: var(--teal); font-weight: 700; font-size: .92rem; }
   .article h3 { font-size: 1.25rem; }
-  .article .more { color: var(--plum); font-weight: 700; }
-  .article[open] .more { display: none; }
-  .article .body { margin-top: 14px; display: grid; gap: 10px; line-height: 1.85; }
+  .article summary { cursor: pointer; list-style: none; width: fit-content; color: var(--plum); font-weight: 700; }
+  .article summary::-webkit-details-marker { display: none; }
+  .article details[open] .when-closed, .article details:not([open]) .when-open { display: none; }
+  .article .body { margin-top: 12px; display: grid; gap: 10px; line-height: 1.85; }
   .article .body ul { margin: 0; padding-inline-start: 22px; display: grid; gap: 6px; }
 
   /* Reviews + feedback */
@@ -283,8 +291,9 @@
   .faq details { background: var(--surface); border-radius: 16px; padding: 14px 18px; box-shadow: var(--shadow); }
   .faq summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; font-weight: 700; color: var(--plum-dark); font-size: 1.08rem; }
   .faq summary::-webkit-details-marker { display: none; }
-  .faq summary::after { content: "+"; color: var(--teal); font-weight: 800; font-size: 1.4rem; line-height: 1; }
-  .faq details[open] summary::after { content: "−"; }
+  /* Decorative +/−: the "/ ''" alt text keeps them out of screen readers (first line is the fallback). */
+  .faq summary::after { content: "+"; content: "+" / ""; color: var(--teal); font-weight: 800; font-size: 1.4rem; line-height: 1; }
+  .faq details[open] summary::after { content: "−"; content: "−" / ""; }
   .faq p { margin-top: 8px; color: var(--muted); }
 
   /* Floating WhatsApp button (phones) */
@@ -300,8 +309,8 @@
   @media (min-width: 760px) { .fab { display: none; } }
 
   @media (prefers-reduced-motion: reduce) {
-    .btn, .service, .why li, .journey li, .fact, .article { transition: none; }
-    .btn:hover, .service:hover, .why li:hover, .journey li:hover, .fact:hover, .article:hover { transform: none; }
+    .btn, .card { transition: none; }
+    .btn:hover, .card:hover { transform: none; }
     .doodle { animation: none; }
   }
 </style>
@@ -371,23 +380,23 @@
         </div>
       </div>
       <ul class="services">
-        <li class="service">
+        <li class="service card">
           <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6l-5.5 9.5A1.7 1.7 0 0 0 6 21h12a1.7 1.7 0 0 0 1.5-2.5L14 9V3"/><path d="M7.5 15h9"/></svg></span>
           <div><h3>دروس العلوم <span class="sub-en" lang="en">Science</span></h3><p>شرح منظّم للمنهج بأسلوب بسيط وواضح.</p></div>
         </li>
-        <li class="service">
+        <li class="service card">
           <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3c0 4 10 5 10 9s-10 5-10 9"/><path d="M17 3c0 4-10 5-10 9s10 5 10 9"/><path d="M8.5 6.5h7M8.5 17.5h7M10 12h4"/></svg></span>
           <div><h3>دروس الأحياء <span class="sub-en" lang="en">Biology</span></h3><p>شرح واضح برسومات توضيحية وأمثلة من الحياة.</p></div>
         </li>
-        <li class="service">
+        <li class="service card">
           <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.4 1 1.2 1 2.1h5c0-.9.4-1.7 1-2.1A6 6 0 0 0 12 3Z"/></svg></span>
           <div><h3>تبسيط المفاهيم</h3><p>نرجع للنقطة اللي الطالب واقف عندها ونشرحها خطوة بخطوة.</p></div>
         </li>
-        <li class="service">
+        <li class="service card">
           <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="m8.5 9 1.5 1.5L13 7.5M8.5 15l1.5 1.5 3-3M15 9.5h1M15 15.5h1"/></svg></span>
           <div><h3>مراجعة وتدريب على الامتحانات</h3><p>مراجعة الدروس، وأسئلة تدريبية، ومتابعة الأجزاء الصعبة.</p></div>
         </li>
-        <li class="service">
+        <li class="service card">
           <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 19h20"/><path d="m10.5 8.5 3.5 2-3.5 2Z"/></svg></span>
           <div><h3>حصص أونلاين تفاعلية</h3><p>بأدوات زي <bdi translate="no">Zoom</bdi> · <bdi translate="no">Google Classroom</bdi> · <bdi translate="no">Microsoft Teams</bdi> · <bdi translate="no">Kahoot</bdi> · <bdi translate="no">Nearpod</bdi></p></div>
         </li>
@@ -402,27 +411,27 @@
         <p>طريقة شرح هدفها إن الطالب يفهم ويحب المادة، مش يحفظ وبس.</p>
       </div>
       <ul class="why">
-        <li>
+        <li class="card">
           <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h7"/></svg></span>
           <h3>شرح بسيط</h3>
           <p>المفاهيم الصعبة بتتقسّم لخطوات صغيرة بكلام سهل.</p>
         </li>
-        <li>
+        <li class="card">
           <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M5.6 5.6l2.1 2.1M3 12h3M18.4 5.6l-2.1 2.1M21 12h-3"/><circle cx="12" cy="14" r="5"/></svg></span>
           <h3>تعلّم تفاعلي</h3>
           <p>رسومات وأمثلة من الحياة وأسئلة تفاعلية جوه الحصة.</p>
         </li>
-        <li>
+        <li class="card">
           <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="m8.5 9 1.5 1.5L13 7.5M8.5 15l1.5 1.5 3-3"/></svg></span>
           <h3>تدريب منظّم</h3>
           <p>أسئلة تدريبية ومراجعة للدروس بانتظام.</p>
         </li>
-        <li>
+        <li class="card">
           <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/></svg></span>
           <h3>متابعة مشجّعة</h3>
           <p>ملاحظات واضحة على اللي اتحسّن واللي محتاج شغل أكتر.</p>
         </li>
-        <li>
+        <li class="card">
           <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></span>
           <h3>على قد احتياجه</h3>
           <p>الحصة بتتظبط على مستوى الطالب والمنهج اللي بيدرسه.</p>
@@ -438,11 +447,11 @@
         <p>كل طالب ماشي بخطة واضحة، من أول حصة لحد الامتحان.</p>
       </div>
       <ol class="journey">
-        <li><h3>نعرف هو فين</h3><p>نتعرف على الصف والمنهج والأجزاء اللي الطالب محتاج فيها مساعدة.</p></li>
-        <li><h3>نشرح خطوة بخطوة</h3><p>شرح بالرسومات والأمثلة لحد ما الفكرة تبقى واضحة.</p></li>
-        <li><h3>نتأكد إنه فهم</h3><p>أسئلة قصيرة نتأكد بيها إن الفكرة وصلت قبل ما نكمّل.</p></li>
-        <li><h3>نتابع الصعب</h3><p>الأجزاء اللي محتاجة شغل أكتر بنرجعلها لحد ما تتظبط.</p></li>
-        <li><h3>نستعد للامتحان</h3><p>مراجعة منظّمة وتدريب على الأسئلة قبل الامتحانات.</p></li>
+        <li class="card"><h3>نعرف هو فين</h3><p>نتعرف على الصف والمنهج والأجزاء اللي الطالب محتاج فيها مساعدة.</p></li>
+        <li class="card"><h3>نشرح خطوة بخطوة</h3><p>شرح بالرسومات والأمثلة لحد ما الفكرة تبقى واضحة.</p></li>
+        <li class="card"><h3>نتأكد إنه فهم</h3><p>أسئلة قصيرة نتأكد بيها إن الفكرة وصلت قبل ما نكمّل.</p></li>
+        <li class="card"><h3>نتابع الصعب</h3><p>الأجزاء اللي محتاجة شغل أكتر بنرجعلها لحد ما تتظبط.</p></li>
+        <li class="card"><h3>نستعد للامتحان</h3><p>مراجعة منظّمة وتدريب على الأسئلة قبل الامتحانات.</p></li>
       </ol>
     </div>
   </section>
@@ -453,9 +462,9 @@
         <h2 id="info-title">الأسعار والمواعيد والمكان</h2>
       </div>
       <dl class="facts">
-        <div class="fact"><dt>الأسعار</dt><dd>بالاتفاق مع ولي الأمر</dd></div>
-        <div class="fact"><dt>المواعيد</dt><dd>بالاتفاق مع ولي الأمر</dd></div>
-        <div class="fact"><dt>المكان</dt><dd>بورسعيد، مصر<small>حصص أونلاين وأوفلاين</small></dd></div>
+        <div class="fact card"><dt>الأسعار</dt><dd>بالاتفاق مع ولي الأمر</dd></div>
+        <div class="fact card"><dt>المواعيد</dt><dd>بالاتفاق مع ولي الأمر</dd></div>
+        <div class="fact card"><dt>المكان</dt><dd>بورسعيد، مصر<small>حصص أونلاين وأوفلاين</small></dd></div>
       </dl>
     </div>
   </section>
@@ -527,12 +536,11 @@
         <p>نصايح بسيطة تساعدك تتابع مذاكرة ابنك في العلوم والأحياء.</p>
       </div>
       <div class="articles">
-        <details class="article">
-          <summary>
-            <span class="kicker">مذاكرة في البيت</span>
-            <h3>إزاي تساعد ابنك يذاكر علوم وأحياء في البيت</h3>
-            <span class="more">اقرأ المقال</span>
-          </summary>
+        <article class="article card">
+          <span class="kicker">مذاكرة في البيت</span>
+          <h3>إزاي تساعد ابنك يذاكر علوم وأحياء في البيت</h3>
+          <details>
+          <summary><span class="when-closed">اقرأ المقال</span><span class="when-open">اقفل المقال</span></summary>
           <div class="body">
             <p>العلوم والأحياء مواد فهم قبل ما تكون مواد حفظ. ودي شوية خطوات بسيطة تقدر تعملها في البيت من غير ما تكون متخصص:</p>
             <ul>
@@ -545,13 +553,13 @@
             </ul>
             <p>ولو لقيت ابنك واقف عند جزء معيّن ومش عارف يكمّل، ده الوقت المناسب يطلب مساعدة قبل ما الأجزاء اللي بعده تتراكم.</p>
           </div>
-        </details>
-        <details class="article">
-          <summary>
-            <span class="kicker">قرار الحصص</span>
-            <h3>إمتى ابنك محتاج حصص إضافية؟</h3>
-            <span class="more">اقرأ المقال</span>
-          </summary>
+          </details>
+        </article>
+        <article class="article card">
+          <span class="kicker">قرار الحصص</span>
+          <h3>إمتى ابنك محتاج حصص إضافية؟</h3>
+          <details>
+          <summary><span class="when-closed">اقرأ المقال</span><span class="when-open">اقفل المقال</span></summary>
           <div class="body">
             <p>مش كل طالب محتاج حصص إضافية، بس فيه علامات لو ظهرت تبقى إشارة إنه محتاج حد يتابعه:</p>
             <ul>
@@ -564,7 +572,8 @@
             </ul>
             <p>ولما تختار، اسأل عن طريقة الشرح، وهل فيه متابعة للأجزاء الصعبة، وهل الحصص أونلاين ولا أوفلاين حسب ظروف ابنك. وابعتلنا صفه ومنهجه <a href="#contact">على واتساب</a> ونتكلم.</p>
           </div>
-        </details>
+          </details>
+        </article>
       </div>
     </div>
   </section>
@@ -703,198 +712,122 @@
     try { navigator.clipboard.writeText('01551401807').then(done, fallback); } catch (e) { fallback(); }
   });
 
-  // Contact form → Supabase table "messages".
-  // Only the publishable key belongs here: RLS on the table allows insert only (no read, update or delete).
+  // Both forms post to Supabase. Only the publishable key belongs here: RLS on each table
+  // allows insert only (no read, update or delete).
   var SUPABASE_URL = 'https://dzixyjhawkncxztvqmxn.supabase.co';
   var SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_rGDyWDQi3g5XhD017GlZ5g_f0Q-Huet';
 
-  (function () {
-    var form = document.getElementById('contact-form');
-    var errorBox = document.getElementById('cf-error');
-    var doneBox = document.getElementById('cf-done');
-    var submitBtn = document.getElementById('cf-submit');
-    var fields = {
-      name: document.getElementById('cf-name'),
-      phone: document.getElementById('cf-phone'),
-      message: document.getElementById('cf-message')
-    };
-    var fieldErrors = {
-      name: document.getElementById('cf-name-error'),
-      phone: document.getElementById('cf-phone-error'),
-      message: document.getElementById('cf-message-error')
-    };
+  function byId(id) { return document.getElementById(id); }
 
-    // Accept Arabic-Indic digits typed on an Arabic keyboard.
-    function toLatinDigits(s) {
-      return s.replace(/[٠-٩]/g, function (d) { return String(d.charCodeAt(0) - 0x0660); })
-              .replace(/[۰-۹]/g, function (d) { return String(d.charCodeAt(0) - 0x06F0); });
-    }
-
-    function validate() {
-      var values = {
-        name: fields.name.value.trim(),
-        phone: toLatinDigits(fields.phone.value).replace(/[\s\-()]/g, ''),
-        message: fields.message.value.trim()
-      };
-      var problems = [];
-      if (!values.name) problems.push(['name', 'اكتب الاسم.']);
-      if (!values.phone) problems.push(['phone', 'اكتب رقم الموبايل.']);
-      else if (!/^\+?\d{6,15}$/.test(values.phone)) problems.push(['phone', 'رقم الموبايل لازم يكون أرقام بس، من 6 لـ 15 رقم.']);
-      if (!values.message) problems.push(['message', 'اكتب الرسالة.']);
-
-      Object.keys(fields).forEach(function (k) {
-        fields[k].removeAttribute('aria-invalid');
-        fieldErrors[k].hidden = true;
-        fieldErrors[k].textContent = '';
-      });
-      problems.forEach(function (p) {
-        fields[p[0]].setAttribute('aria-invalid', 'true');
-        fieldErrors[p[0]].textContent = p[1];
-        fieldErrors[p[0]].hidden = false;
-      });
-      return { values: values, problems: problems };
-    }
-
-    // Warn before leaving with an unsent message.
-    var dirty = false;
-    form.addEventListener('input', function () { dirty = true; });
-    window.addEventListener('beforeunload', function (e) {
-      if (!dirty) return;
-      e.preventDefault();
-      e.returnValue = '';
+  function sendToSupabase(table, row) {
+    return fetch(SUPABASE_URL + '/rest/v1/' + table, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_PUBLISHABLE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(row)
+    }).then(function (res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
     });
+  }
 
-    function showError(text) {
-      errorBox.textContent = text;
-      errorBox.hidden = false;
-    }
+  // Warn before leaving while any form holds unsent text.
+  var dirtyForms = [];
+  window.addEventListener('beforeunload', function (e) {
+    if (!dirtyForms.length) return;
+    e.preventDefault();
+    e.returnValue = '';
+  });
+
+  // A field: its input, the error line under it, and a check returning the error text ('' when fine).
+  function field(id, check) { return { el: byId(id), error: byId(id + '-error'), check: check }; }
+  function required(text) { return function (el) { return el.value.trim() ? '' : text; }; }
+
+  // Wires one form: inline errors under each field (focus the first), one insert into `table`,
+  // then the success line, or an error with the WhatsApp fallback.
+  function wireForm(opts) {
+    var form = byId(opts.form);
+    var errorBox = byId(opts.error);
+    var doneBox = byId(opts.done);
+    var submitBtn = byId(opts.submit);
+    var idleLabel = submitBtn.textContent;
+
+    form.addEventListener('input', function () {
+      if (dirtyForms.indexOf(form) < 0) dirtyForms.push(form);
+    });
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       errorBox.hidden = true;
-      var result = validate();
-      if (result.problems.length) {
-        fields[result.problems[0][0]].focus();
-        return;
-      }
+      var first = null;
+      opts.fields.forEach(function (f) {
+        var problem = f.check(f.el);
+        if (problem) f.el.setAttribute('aria-invalid', 'true'); else f.el.removeAttribute('aria-invalid');
+        f.error.textContent = problem;
+        f.error.hidden = !problem;
+        if (problem && !first) first = f.el;
+      });
+      if (first) { first.focus(); return; }
 
       submitBtn.disabled = true;
       submitBtn.textContent = 'بيتبعت…';
-
-      fetch(SUPABASE_URL + '/rest/v1/messages', {
-        method: 'POST',
-        headers: {
-          'apikey': SUPABASE_PUBLISHABLE_KEY,
-          'Content-Type': 'application/json',
-          'Prefer': 'return=minimal'
-        },
-        body: JSON.stringify(result.values)
-      }).then(function (res) {
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        dirty = false;
+      sendToSupabase(opts.table, opts.row()).then(function () {
+        dirtyForms = dirtyForms.filter(function (f) { return f !== form; });
         form.hidden = true;
         doneBox.hidden = false;
         doneBox.focus();
       }).catch(function () {
-        showError('الرسالة ما اتبعتتش. جرّب تاني بعد شوية، أو ابعت على واتساب 01551401807.');
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'ابعت الرسالة';
-      });
-    });
-  })();
-
-  // Feedback form → Supabase table "feedback" (insert-only, like "messages").
-  (function () {
-    var form = document.getElementById('feedback-form');
-    var errorBox = document.getElementById('fb-error');
-    var doneBox = document.getElementById('fb-done');
-    var submitBtn = document.getElementById('fb-submit');
-    var name = document.getElementById('fb-name');
-    var grade = document.getElementById('fb-grade');
-    var message = document.getElementById('fb-message');
-    var consent = document.getElementById('fb-consent');
-    var required = [
-      [name, document.getElementById('fb-name-error'), 'اكتب اسمك.'],
-      [message, document.getElementById('fb-message-error'), 'اكتب رأيك.']
-    ];
-
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      errorBox.hidden = true;
-      var firstEmpty = null;
-      required.forEach(function (r) {
-        var empty = !r[0].value.trim();
-        if (empty) r[0].setAttribute('aria-invalid', 'true'); else r[0].removeAttribute('aria-invalid');
-        r[1].textContent = empty ? r[2] : '';
-        r[1].hidden = !empty;
-        if (empty && !firstEmpty) firstEmpty = r[0];
-      });
-      if (firstEmpty) { firstEmpty.focus(); return; }
-
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'بيتبعت…';
-
-      fetch(SUPABASE_URL + '/rest/v1/feedback', {
-        method: 'POST',
-        headers: {
-          'apikey': SUPABASE_PUBLISHABLE_KEY,
-          'Content-Type': 'application/json',
-          'Prefer': 'return=minimal'
-        },
-        body: JSON.stringify({
-          name: name.value.trim(),
-          grade: grade.value.trim() || null,
-          message: message.value.trim(),
-          allow_publish: consent.checked
-        })
-      }).then(function (res) {
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        form.hidden = true;
-        doneBox.hidden = false;
-        doneBox.focus();
-      }).catch(function () {
-        errorBox.textContent = 'رأيك ما اتبعتش. جرّب تاني بعد شوية، أو ابعته على واتساب 01551401807.';
+        errorBox.textContent = opts.failText;
         errorBox.hidden = false;
         submitBtn.disabled = false;
-        submitBtn.textContent = 'ابعت رأيك';
+        submitBtn.textContent = idleLabel;
       });
     });
-  })();
+  }
 
-  // Reveal blocks as they scroll into view; skipped when the visitor prefers less motion.
-  (function () {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    var pending = Array.prototype.slice.call(document.querySelectorAll('main section:not(.hero) .section-head, .service, .aud, .why li, .journey li, .fact, .steps-grid > *, .video-ph, .quals li, .article, .reviews-empty, #reviews .form-card, .faq details, .contact .wrap > *'));
+  // Accept Arabic-Indic digits typed on an Arabic keyboard.
+  function toLatinDigits(s) {
+    return s.replace(/[٠-٩]/g, function (d) { return String(d.charCodeAt(0) - 0x0660); })
+            .replace(/[۰-۹]/g, function (d) { return String(d.charCodeAt(0) - 0x06F0); });
+  }
+  function contactPhone() { return toLatinDigits(byId('cf-phone').value).replace(/[\s\-()]/g, ''); }
 
-    // Plain position check, run straight from scroll/resize: no observer or frame callback
-    // to stall, and cheap for ~50 blocks.
-    function revealVisible() {
-      var limit = window.innerHeight * 0.95;
-      pending = pending.filter(function (el) {
-        var r = el.getBoundingClientRect();
-        if (r.top >= limit || r.bottom <= 0) return true;
-        el.classList.add('in');
-        el.addEventListener('transitionend', function () { el.style.transitionDelay = ''; }, { once: true });
-        return false;
-      });
-      if (!pending.length) {
-        window.removeEventListener('scroll', revealVisible);
-        window.removeEventListener('resize', revealVisible);
-      }
-    }
+  // Contact form → table "messages".
+  wireForm({
+    form: 'contact-form', error: 'cf-error', done: 'cf-done', submit: 'cf-submit', table: 'messages',
+    fields: [
+      field('cf-name', required('اكتب الاسم.')),
+      field('cf-phone', function () {
+        var phone = contactPhone();
+        if (!phone) return 'اكتب رقم الموبايل.';
+        return /^\+?\d{6,15}$/.test(phone) ? '' : 'رقم الموبايل لازم يكون أرقام بس، من 6 لـ 15 رقم.';
+      }),
+      field('cf-message', required('اكتب الرسالة.'))
+    ],
+    row: function () {
+      return { name: byId('cf-name').value.trim(), phone: contactPhone(), message: byId('cf-message').value.trim() };
+    },
+    failText: 'الرسالة ما اتبعتتش. جرّب تاني بعد شوية، أو ابعت على واتساب 01551401807.'
+  });
 
-    // Hide anything only once the page is actually rendering: blocks already on screen are
-    // marked visible first, and if this frame never runs, nothing is ever hidden.
-    window.requestAnimationFrame(function () {
-      pending.forEach(function (el, i) {
-        el.classList.add('reveal');
-        el.style.transitionDelay = (i % 4) * 60 + 'ms';
-      });
-      revealVisible();
-      document.documentElement.classList.add('js');
-      window.addEventListener('scroll', revealVisible, { passive: true });
-      window.addEventListener('resize', revealVisible);
-    });
-  })();
+  // Feedback form → table "feedback".
+  wireForm({
+    form: 'feedback-form', error: 'fb-error', done: 'fb-done', submit: 'fb-submit', table: 'feedback',
+    fields: [
+      field('fb-name', required('اكتب اسمك.')),
+      field('fb-message', required('اكتب رأيك.'))
+    ],
+    row: function () {
+      return {
+        name: byId('fb-name').value.trim(),
+        grade: byId('fb-grade').value.trim() || null,
+        message: byId('fb-message').value.trim(),
+        allow_publish: byId('fb-consent').checked
+      };
+    },
+    failText: 'رأيك ما اتبعتش. جرّب تاني بعد شوية، أو ابعته على واتساب 01551401807.'
+  });
 </script>
 </html>
