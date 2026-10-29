@@ -118,8 +118,8 @@
   .hero h1 { font-size: clamp(2.1rem, 7vw, 3.4rem); font-weight: 800; color: var(--plum); }
   .hero p.lead { color: var(--muted); font-size: 1.15rem; max-width: 34em; }
   .cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
-  .hero-img { margin: 0; }
-  .hero-img img { display: block; width: 100%; max-width: 520px; margin-inline: auto; border-radius: 28px; box-shadow: var(--shadow); }
+  .hero-img { margin: 0 auto; position: relative; width: 100%; max-width: 520px; }
+  .hero-img > img { display: block; width: 100%; border-radius: 28px; box-shadow: var(--shadow); }
   @media (min-width: 860px) {
     .hero .wrap { grid-template-columns: 1.1fr 1fr; padding-block: 56px 72px; }
   }
@@ -166,7 +166,7 @@
     font-family: var(--font-display); font-weight: 800; font-size: 1.2rem;
   }
   .sticker { margin: 0; justify-self: center; }
-  .sticker img { display: block; width: 240px; max-width: 100%; border-radius: 28px; background: var(--sticker-bg); }
+  .sticker img { display: block; width: 230px; max-width: 100%; height: auto; filter: drop-shadow(0 10px 16px rgba(64, 18, 63, .2)); animation: bob 6s ease-in-out infinite; transform-origin: 50% 90%; }
   @media (min-width: 760px) { .steps-grid { grid-template-columns: 1.4fr 1fr; } }
 
   /* Qualifications */
@@ -227,6 +227,30 @@
         animation-timeline: view();
         animation-range: entry 0% entry 40%;
       }
+    }
+  }
+
+  /* Stickers (cut from the brand sticker pack): one per section, beside the title.
+     The wrapper pops in on scroll; the image inside floats with its own tilt (--tilt). */
+  .has-stk { position: relative; padding-inline-end: clamp(100px, 27vw, 178px); min-height: clamp(96px, 26vw, 168px); align-content: center; }
+  .stk { position: absolute; inset-inline-end: 0; top: 50%; translate: 0 -50%; width: clamp(90px, 24vw, 160px); pointer-events: none; }
+  .stk img, .stk-inline img { display: block; width: 100%; height: auto; filter: drop-shadow(0 10px 16px rgba(64, 18, 63, .2)); animation: bob 6s ease-in-out infinite; transform-origin: 50% 90%; }
+  .stk-hero { top: auto; bottom: -22px; inset-inline-end: auto; inset-inline-start: -10px; translate: none; width: clamp(104px, 28vw, 172px); z-index: 2; }
+  .stk-inline { display: block; width: clamp(110px, 30vw, 150px); }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0) rotate(var(--tilt, -4deg)); }
+    50% { transform: translateY(-9px) rotate(calc(var(--tilt, -4deg) * -0.4)); }
+  }
+  @keyframes pop { from { opacity: 0; scale: .55; rotate: -14deg; } }
+  @supports (animation-timeline: view()) {
+    @media screen and (prefers-reduced-motion: no-preference) {
+      .stk, .stk-inline, .sticker {
+        animation: pop linear backwards;
+        animation-timeline: view();
+        animation-range: entry 5% entry 65%;
+      }
+      /* Already on screen at load, so it pops on a timer instead of on scroll. */
+      .stk.stk-hero { animation: pop .8s .35s cubic-bezier(.2, .8, .3, 1.25) backwards; animation-timeline: auto; }
     }
   }
 
@@ -311,7 +335,7 @@
   @media (prefers-reduced-motion: reduce) {
     .btn, .card { transition: none; }
     .btn:hover, .card:hover { transform: none; }
-    .doodle { animation: none; }
+    .doodle, .stk img, .stk-inline img, .sticker img { animation: none; }
   }
 </style>
 
@@ -350,6 +374,7 @@
       </div>
       <figure class="hero-img">
         <img src="images/hero.jpg" width="800" height="800" fetchpriority="high" alt="رسمة مس نهى بالبالطو الأبيض في معمل أحياء، ماسكة دورق وأنبوبة اختبار وجنبها ميكروسكوب">
+        <span class="stk stk-hero" style="--tilt: -6deg" aria-hidden="true"><img src="images/stickers/magic.webp" width="342" height="359" alt="" decoding="async"></span>
       </figure>
     </div>
   </section>
@@ -406,7 +431,8 @@
 
   <section aria-labelledby="why-title">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head has-stk">
+        <span class="stk" style="--tilt: 5deg" aria-hidden="true"><img src="images/stickers/small-steps.webp" width="343" height="355" alt="" loading="lazy" decoding="async"></span>
         <h2 id="why-title">ليه تتعلم مع مس نهى؟</h2>
         <p>طريقة شرح هدفها إن الطالب يفهم ويحب المادة، مش يحفظ وبس.</p>
       </div>
@@ -442,7 +468,8 @@
 
   <section class="band" aria-labelledby="journey-title">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head has-stk">
+        <span class="stk" style="--tilt: -5deg" aria-hidden="true"><img src="images/stickers/observe.webp" width="244" height="338" alt="" loading="lazy" decoding="async"></span>
         <h2 id="journey-title">رحلة الطالب معانا</h2>
         <p>كل طالب ماشي بخطة واضحة، من أول حصة لحد الامتحان.</p>
       </div>
@@ -483,7 +510,7 @@
         </ol>
       </div>
       <figure class="sticker">
-        <img src="images/sticker-online.jpg" width="360" height="318" alt="ستيكر مس نهى قدام اللابتوب مكتوب عليه Online Classes" loading="lazy">
+        <img src="images/stickers/online.webp" width="301" height="267" alt="ستيكر مس نهى قدام اللابتوب مكتوب عليه Online Classes" loading="lazy" decoding="async">
       </figure>
     </div>
   </section>
@@ -531,7 +558,8 @@
 
   <section id="parents" aria-labelledby="parents-title">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head has-stk">
+        <span class="stk" style="--tilt: 4deg" aria-hidden="true"><img src="images/stickers/lesson-plan.webp" width="266" height="339" alt="" loading="lazy" decoding="async"></span>
         <h2 id="parents-title">لأولياء الأمور</h2>
         <p>نصايح بسيطة تساعدك تتابع مذاكرة ابنك في العلوم والأحياء.</p>
       </div>
@@ -580,7 +608,8 @@
 
   <section class="band" id="reviews" aria-labelledby="reviews-title">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head has-stk">
+        <span class="stk" style="--tilt: -6deg" aria-hidden="true"><img src="images/stickers/good-job.webp" width="189" height="218" alt="" loading="lazy" decoding="async"></span>
         <h2 id="reviews-title">آراء أولياء الأمور</h2>
         <p>رأيك بيفرق معانا، وبيساعد أولياء أمور تانيين يختاروا.</p>
       </div>
@@ -618,7 +647,8 @@
 
   <section id="faq" aria-labelledby="faq-title">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head has-stk">
+        <span class="stk" style="--tilt: 6deg" aria-hidden="true"><img src="images/stickers/love-biology.webp" width="206" height="229" alt="" loading="lazy" decoding="async"></span>
         <h2 id="faq-title">أسئلة متكررة</h2>
       </div>
       <div class="faq">
@@ -644,6 +674,7 @@
 
   <section class="contact band" id="contact" aria-labelledby="contact-title">
     <div class="wrap">
+      <span class="stk-inline" style="--tilt: -4deg" aria-hidden="true"><img src="images/stickers/can-do-it.webp" width="328" height="356" alt="" loading="lazy" decoding="async"></span>
       <h2 id="contact-title">تواصل مع مس نهى</h2>
       <p>اكتب الصف والمنهج، ونتفق على الحصص المناسبة.</p>
       <p class="phone" id="phone">01551401807</p>
